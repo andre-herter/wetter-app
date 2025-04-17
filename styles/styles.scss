@@ -1,0 +1,37 @@
+@use "sass:color";
+@use "variables" as *;
+@use "mixins" as m;
+@use "currentWeather";
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  @include m.largeScreens {
+    background-color: color.adjust($background, $lightness: 10%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+}
+
+#app {
+  background: linear-gradient(0deg, $elevation-2 0%, $background 50%);
+  background-color: $background;
+  color: $text-color;
+  padding: 1rem;
+  min-height: 100vh;
+  font-family: $font-family;
+
+  @include m.largeScreens {
+    width: 400px;
+    height: 900px;
+    min-height: unset;
+    overflow: auto;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+  }
+}
