@@ -1,4 +1,6 @@
-import { getForecastWeather } from "./api";
+import { loadCurrentWeather } from "./currentWeather";
 import "/styles/styles.scss";
 
-getForecastWeather("Siegen");
+export const rootElement = document.getElementById("app");
+
+loadCurrentWeather();
