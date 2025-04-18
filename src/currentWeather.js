@@ -1,10 +1,11 @@
-import { rootElement } from "./main";
 import { getForecastWeather } from "./api";
+import { rootElement } from "./main";
+import { renderLoadingScreen } from "./loading";
 import { formatTemperatur } from "./untils";
 
-export async function loadCurrentWeather() {
-  //loading screen anzeigen
-  const weatherData = await getForecastWeather("Kreuztal");
+export async function loadCurrentWeather(cityName) {
+  renderLoadingScreen("Lade Wetter für " + cityName + "....");
+  const weatherData = await getForecastWeather(cityName);
   renderCurrentWeather(weatherData);
   // eventlistener regestrieren
 }
