@@ -24,3 +24,31 @@
     margin-bottom: 0.25rem;
   }
 }
+
+.today-forecast {
+  margin-top: 2rem;
+  @include m.card();
+
+  &__conditions {
+    @include m.cardHeader();
+  }
+
+  &__hours {
+    width: 100%;
+    display: flex;
+    overflow-x: scroll;
+    gap: 0.5rem;
+  }
+
+  .hourly-forecast {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+
+    &__icon {
+      width: 4rem;
+    }
+  }
+}

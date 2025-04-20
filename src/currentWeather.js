@@ -1,7 +1,7 @@
 import { getForecastWeather } from "./api";
 import { rootElement } from "./main";
 import { renderLoadingScreen } from "./loading";
-import { formatTemperatur } from "./untils";
+import { formatTemperatur, formatTime } from "./untils";
 
 export async function loadCurrentWeather(cityName) {
   renderLoadingScreen("Lade Wetter für " + cityName + "....");
@@ -14,13 +14,20 @@ function renderCurrentWeather(weatherData) {
   const { location, current, forecast } = weatherData;
   const currentDay = forecast.forecastday[0];
 
-  rootElement.innerHTML = getCurrentWeatherHtml(
-    location.name,
-    formatTemperatur(current.temp_c),
-    current.condition.text,
-    formatTemperatur(currentDay.day.maxtemp_c),
-    formatTemperatur(currentDay.day.mintemp_c)
-  );
+  rootElement.innerHTML =
+    getCurrentWeatherHtml(
+      location.name,
+      formatTemperatur(current.temp_c),
+      current.condition.text,
+      formatTemperatur(currentDay.day.maxtemp_c),
+      formatTemperatur(currentDay.day.mintemp_c)
+    ) +
+    getTodayForecastHtml(
+      currentDay.day.condition.text,
+      currentDay.day.maxwind_kph,
+      currentDay.hour,
+      current.last_updated_epoch
+    );
 }
 
 function getCurrentWeatherHtml(
@@ -42,4 +49,35 @@ function getCurrentWeatherHtml(
       </div>
     
     `;
+}
+
+function getTodayForecastHtml(condition, maxWind, forecastHours) {
+  const hourlyForecastEl = forecastHours.map(
+    (hour) => `
+      <div class="hourly-forecast">
+          <div class="hourly-forecast__time">${formatTime(hour.time)} Uhr</div>
+          <img
+              src="https:${hour.condition.icon}"
+              alt=""
+              class="hourly-forecast__icon"
+            />
+          <div class="hourly-forecast__temperature">${formatTemperatur(
+            hour.temp_c
+          )}°</div>
+      </div>`
+  );
+
+  const hourlyForecastHtml = hourlyForecastEl.join("");
+
+  return `
+    <div class="today-forecast">
+        <div class="today-forecast__conditions">
+          Heute ${condition}. Wind bis zu ${maxWind} km/h
+        </div>
+        <div class="today-forecast__hours">
+          ${hourlyForecastHtml}
+        </div>
+      </div>
+  
+  `;
 }

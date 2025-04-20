@@ -9,6 +9,10 @@
   padding: 0;
 }
 
+::-webkit-scrollbar {
+  width: 0;
+}
+
 body {
   @include m.largeScreens {
     background-color: color.adjust($background, $lightness: 10%);
