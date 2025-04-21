@@ -3,4 +3,4 @@ import { loadCurrentWeather } from "./currentWeather";
 
 export const rootElement = document.getElementById("app");
 
-loadCurrentWeather("Kreuztal");
+loadCurrentWeather("Siegen");

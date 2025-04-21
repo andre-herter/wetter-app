@@ -1,7 +1,11 @@
 import { getForecastWeather } from "./api";
 import { rootElement } from "./main";
 import { renderLoadingScreen } from "./loading";
-import { formatTemperatur, formatTime } from "./untils";
+import {
+  formatTemperatur,
+  formatTime,
+  get24HoursForecastFromNow,
+} from "./untils";
 
 export async function loadCurrentWeather(cityName) {
   renderLoadingScreen("Lade Wetter für " + cityName + "....");
@@ -25,7 +29,7 @@ function renderCurrentWeather(weatherData) {
     getTodayForecastHtml(
       currentDay.day.condition.text,
       currentDay.day.maxwind_kph,
-      currentDay.hour,
+      forecast.forecastday,
       current.last_updated_epoch
     );
 }
@@ -51,11 +55,23 @@ function getCurrentWeatherHtml(
     `;
 }
 
-function getTodayForecastHtml(condition, maxWind, forecastHours) {
-  const hourlyForecastEl = forecastHours.map(
-    (hour) => `
+function getTodayForecastHtml(
+  condition,
+  maxWind,
+  forecastdays,
+  last_updated_epoch
+) {
+  const hourlyForecastEl = get24HoursForecastFromNow(
+    forecastdays,
+    last_updated_epoch
+  )
+    .filter((el) => el !== undefined)
+    .map(
+      (hour, i) => `
       <div class="hourly-forecast">
-          <div class="hourly-forecast__time">${formatTime(hour.time)} Uhr</div>
+          <div class="hourly-forecast__time">${
+            i === 0 ? "Jetzt" : formatTime(hour.time) + " Uhr"
+          }</div>
           <img
               src="https:${hour.condition.icon}"
               alt=""
@@ -65,7 +81,7 @@ function getTodayForecastHtml(condition, maxWind, forecastHours) {
             hour.temp_c
           )}°</div>
       </div>`
-  );
+    );
 
   const hourlyForecastHtml = hourlyForecastEl.join("");
 
