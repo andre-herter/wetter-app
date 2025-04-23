@@ -2,9 +2,10 @@ import { getForecastWeather } from "./api";
 import { rootElement } from "./main";
 import { renderLoadingScreen } from "./loading";
 import {
-  formatTemperatur,
+  formatTemperature,
   formatTime,
   get24HoursForecastFromNow,
+  formatDateToWeekday,
 } from "./untils";
 
 export async function loadCurrentWeather(cityName) {
@@ -21,17 +22,18 @@ function renderCurrentWeather(weatherData) {
   rootElement.innerHTML =
     getCurrentWeatherHtml(
       location.name,
-      formatTemperatur(current.temp_c),
+      formatTemperature(current.temp_c),
       current.condition.text,
-      formatTemperatur(currentDay.day.maxtemp_c),
-      formatTemperatur(currentDay.day.mintemp_c)
+      formatTemperature(currentDay.day.maxtemp_c),
+      formatTemperature(currentDay.day.mintemp_c)
     ) +
     getTodayForecastHtml(
       currentDay.day.condition.text,
       currentDay.day.maxwind_kph,
       forecast.forecastday,
       current.last_updated_epoch
-    );
+    ) +
+    getforecastHtml(forecast.forecastday);
 }
 
 function getCurrentWeatherHtml(
@@ -59,11 +61,11 @@ function getTodayForecastHtml(
   condition,
   maxWind,
   forecastdays,
-  last_updated_epoch
+  lastUpdatedEpoch
 ) {
   const hourlyForecastEl = get24HoursForecastFromNow(
     forecastdays,
-    last_updated_epoch
+    lastUpdatedEpoch
   )
     .filter((el) => el !== undefined)
     .map(
@@ -77,7 +79,7 @@ function getTodayForecastHtml(
               alt=""
               class="hourly-forecast__icon"
             />
-          <div class="hourly-forecast__temperature">${formatTemperatur(
+          <div class="hourly-forecast__temperature">${formatTemperature(
             hour.temp_c
           )}°</div>
       </div>`
@@ -93,6 +95,47 @@ function getTodayForecastHtml(
         <div class="today-forecast__hours">
           ${hourlyForecastHtml}
         </div>
+      </div>
+  
+  `;
+}
+
+function getforecastHtml(forecast) {
+  const forecastEl = forecast.map(
+    (forecastDay, i) => `
+        <div class="forecast-day">
+            <div class="forecast-day__day">${
+              i === 0 ? "Heute" : formatDateToWeekday(forecastDay.date)
+            }
+            </div>
+            <img
+              src="https:${forecastDay.day.condition.icon}"
+              alt=""
+              class="forecast-day__icon"
+            />
+            <div class="forecast__day-temperature">
+              <span class="forecast-day__max-temperature">H:${formatTemperature(
+                forecastDay.day.maxtemp_c
+              )}°</span>
+              <span class="forecast-day__min-temperature">T:${formatTemperature(
+                forecastDay.day.mintemp_c
+              )}°</span>
+            </div>
+            <div class="forecast-day__wind">Wind: ${
+              forecastDay.day.maxwind_kph
+            }km/h</div>
+        </div>
+  `
+  );
+
+  const forecastHtml = forecastEl.join("");
+
+  return `
+      <div class="forecast">
+          <div class="forecast__header">Vorhersage für die nächsten 3 Tage:</div>
+          <div class="forecast__days">
+            ${forecastHtml}
+          </div>
       </div>
   
   `;

@@ -1,5 +1,5 @@
-export function formatTemperatur(temperature) {
-  return Math.round(temperature);
+export function formatTemperature(temperature) {
+  return Math.floor(temperature);
 }
 
 export function formatTime(time) {
@@ -7,6 +7,14 @@ export function formatTime(time) {
   const hourOnly = date.getHours();
 
   return hourOnly;
+}
+
+export function formatDateToWeekday(date) {
+  const currentDate = new Date(date);
+  const weekday = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+  const dayIndex = currentDate.getDay();
+
+  return weekday[dayIndex];
 }
 
 export function get24HoursForecastFromNow(forecast, last_updated_epoch) {

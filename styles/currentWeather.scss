@@ -52,3 +52,41 @@
     }
   }
 }
+
+.forecast {
+  margin-top: 2rem;
+  @include m.card();
+
+  &__header {
+    @include m.cardHeader();
+  }
+
+  &__days {
+    display: flex;
+    flex-direction: column;
+    gap: $card-header-gap;
+    width: 100%;
+  }
+}
+
+.forecast-day {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: $card-header-gap;
+  border-bottom: $border;
+
+  &:last-child {
+    padding: 0;
+    border: none;
+  }
+
+  &__day {
+    width: 2rem;
+  }
+
+  &__icon {
+    width: 2.5rem;
+  }
+}
