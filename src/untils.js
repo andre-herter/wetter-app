@@ -17,6 +17,11 @@ export function formatDateToWeekday(date) {
   return weekday[dayIndex];
 }
 
+export function formatTwentyFourHourTime(amPmString) {
+  var d = new Date("1/1/2013 " + amPmString);
+  return d.getHours() + ":" + d.getMinutes();
+}
+
 export function get24HoursForecastFromNow(forecast, last_updated_epoch) {
   console.log(forecast, last_updated_epoch);
 

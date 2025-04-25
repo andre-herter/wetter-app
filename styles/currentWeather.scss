@@ -90,3 +90,24 @@
     width: 2.5rem;
   }
 }
+
+.forecastinformations {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.forecastinformation {
+  @include m.card();
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+
+  &__value {
+    margin: 1rem 0;
+    font-size: 1.5rem;
+  }
+}

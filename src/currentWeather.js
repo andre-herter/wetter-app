@@ -6,6 +6,7 @@ import {
   formatTime,
   get24HoursForecastFromNow,
   formatDateToWeekday,
+  formatTwentyFourHourTime,
 } from "./untils";
 
 export async function loadCurrentWeather(cityName) {
@@ -33,7 +34,15 @@ function renderCurrentWeather(weatherData) {
       forecast.forecastday,
       current.last_updated_epoch
     ) +
-    getforecastHtml(forecast.forecastday);
+    getforecastHtml(forecast.forecastday) +
+    getForecastInformationHtml(
+      current.humidity,
+      current.feelslike_c,
+      current.precip_mm,
+      current.uv,
+      currentDay.astro.sunrise,
+      currentDay.astro.sunset
+    );
 }
 
 function getCurrentWeatherHtml(
@@ -137,6 +146,49 @@ function getforecastHtml(forecast) {
             ${forecastHtml}
           </div>
       </div>
+  
+  `;
+}
+
+function getForecastInformationHtml(
+  humidity,
+  feelslike,
+  precip,
+  uvIndex,
+  sunrise,
+  sunset
+) {
+  return `
+    <div class="forecastinformations">
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">Feuchtigkeit</span>
+          <span class="forecastinformation__value">${humidity}%</span>
+        </div>
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">Gefühlt</span>
+          <span class="forecastinformation__value">${feelslike} °</span>
+        </div>
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">Niederschlag</span>
+          <span class="forecastinformation__value">${precip}mm</span>
+        </div>
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">UV-Index</span>
+          <span class="forecastinformation__value">${uvIndex}</span>
+        </div>
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">Sonnenaufgang</span>
+          <span class="forecastinformation__value">${formatTwentyFourHourTime(
+            sunrise
+          )} Uhr</span>
+        </div>
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">Sonnenuntergang</span>
+          <span class="forecastinformation__value">${formatTwentyFourHourTime(
+            sunset
+          )} Uhr</span>
+        </div>
+    </div>
   
   `;
 }
