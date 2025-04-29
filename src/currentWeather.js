@@ -8,6 +8,7 @@ import {
   formatDateToWeekday,
   formatTwentyFourHourTime,
 } from "./untils";
+import { getConditionImagePath } from "./conditions";
 
 export async function loadCurrentWeather(cityName) {
   renderLoadingScreen("Lade Wetter für " + cityName + "....");
@@ -19,6 +20,16 @@ export async function loadCurrentWeather(cityName) {
 function renderCurrentWeather(weatherData) {
   const { location, current, forecast } = weatherData;
   const currentDay = forecast.forecastday[0];
+
+  const conditionImage = getConditionImagePath(
+    current.condition.code,
+    current.is_day !== 1
+  );
+
+  if (conditionImage) {
+    rootElement.style = `--detail-condition-image: url(${conditionImage})`;
+    rootElement.classList.add("show-background");
+  }
 
   rootElement.innerHTML =
     getCurrentWeatherHtml(

@@ -17,9 +17,20 @@ export function formatDateToWeekday(date) {
   return weekday[dayIndex];
 }
 
-export function formatTwentyFourHourTime(amPmString) {
-  var d = new Date("1/1/2013 " + amPmString);
-  return d.getHours() + ":" + d.getMinutes();
+export function formatTwentyFourHourTime(time) {
+  const isAm = time.includes("AM");
+
+  const timeWithoutSuffix = time.split(" ")[0];
+
+  if (isAm) {
+    return timeWithoutSuffix;
+  }
+
+  const [hour, minutes] = timeWithoutSuffix.split(":");
+
+  const newHour = Number(hour) + 12;
+
+  return newHour + ":" + minutes;
 }
 
 export function get24HoursForecastFromNow(forecast, last_updated_epoch) {
