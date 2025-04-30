@@ -1,6 +1,6 @@
 import "/styles/styles.scss";
-import { loadCurrentWeather } from "./currentWeather";
+import { loadMainMenu } from "./mainMenu";
 
 export const rootElement = document.getElementById("app");
 
-loadCurrentWeather("Kreuztal");
+loadMainMenu();
