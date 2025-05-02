@@ -14,7 +14,7 @@ export async function loadMainMenu() {
 async function renderMainMenu() {
   rootElement.innerHTML = `
             <div class="main-menu">
-                ${await getMenuHeaderHtml()}
+                ${getMenuHeaderHtml()}
                 ${await getCitiesHtml()}
             </div>
     `;
@@ -39,7 +39,7 @@ function getMenuHeaderHtml() {
 }
 
 async function getCitiesHtml() {
-  const favoriteCities = ["Mannheim", "London", "Peking"];
+  const favoriteCities = ["Kreuztal", "London", "Peking"];
 
   const favoriteCityEl = [];
 
@@ -91,9 +91,9 @@ async function getCitiesHtml() {
   const favoriteCitiesHtml = favoriteCityEl.join("");
 
   return `
-    <div class="main-menu__cities">
+      <div class="main-menu__cities">
             ${favoriteCitiesHtml}
-        </div>
+      </div>
     
     
     `;
