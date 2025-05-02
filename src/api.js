@@ -14,6 +14,18 @@ export async function getForecastWeather(location, days = 3) {
   return weatherData;
 }
 
+export async function searchLocation(q) {
+  const response = await fetch(
+    `${API_BASE_URL}/search.json?key=${API_KEY}&q=${q}&lang=de`
+  );
+
+  const searchResults = await response.json();
+
+  console.log(searchResults);
+
+  return searchResults;
+}
+
 export function getFavoriteCities() {
   return JSON.parse(localStorage.getItem(FAVORITE_CITIES_KEY)) || [];
 }
@@ -29,4 +41,12 @@ export function saveCityAsFavorite(city) {
   favorites.push(city);
 
   localStorage.setItem(FAVORITE_CITIES_KEY, JSON.stringify(favorites));
+}
+
+export function removeCytyFromFavorite(city) {
+  const favorites = getFavoriteCities();
+
+  const filteredFavorites = favorites.filter((favorite) => favorite !== city);
+
+  localStorage.setItem(FAVORITE_CITIES_KEY, JSON.stringify(filteredFavorites));
 }

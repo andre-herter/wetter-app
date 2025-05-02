@@ -1,4 +1,9 @@
-import { getFavoriteCities, getForecastWeather } from "./api";
+import {
+  getFavoriteCities,
+  getForecastWeather,
+  removeCytyFromFavorite,
+  searchLocation,
+} from "./api";
 import { loadCurrentWeather } from "./currentWeather";
 import { renderLoadingScreen } from "./loading";
 import { rootElement } from "./main";
@@ -33,10 +38,17 @@ function getMenuHeaderHtml() {
                 class="main-menu__search-input"
                 placeholder="Nach Stadt suchen"
             />
+              <div class="main-menu__search-results"></div>
             </div>
     
     `;
 }
+
+const deleteIcon = `
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+`;
 
 async function getCitiesHtml() {
   const favoriteCities = getFavoriteCities();
@@ -60,6 +72,7 @@ async function getCitiesHtml() {
 
     const cityHtml = `
         <div class="wrapper">
+            <div class="wrapper__delete" data-city-name="${city}">${deleteIcon}</div>
             <div
                 class="city"
                 data-city-name=${location.name}
@@ -103,7 +116,80 @@ async function getCitiesHtml() {
     `;
 }
 
+function renderSearchResults(searchResults) {
+  const searchResultsEl = searchResults.map(
+    (result) => `
+        <div class="search-result" data-city-name="${result.name}">
+          <h3 class="search-result__name">${result.name}</h3>
+          <p class="search-result__country">${result.country}</p>
+        </div>
+    `
+  );
+
+  const searchResultsHtml = searchResultsEl.join("");
+
+  const searchResultsDiv = document.querySelector(".main-menu__search-results");
+  searchResultsDiv.innerHTML = searchResultsHtml;
+}
+
+function registerSearchResultsEventListeners() {
+  const searchResults = document.querySelectorAll(".search-result");
+
+  searchResults.forEach((searchResult) => {
+    searchResult.addEventListener("click", () => {
+      const cityName = searchResult.getAttribute("data-city-name");
+      loadCurrentWeather(cityName);
+    });
+  });
+}
+
 function registerEventListeners() {
+  const editButton = document.querySelector(".main-menu__edit");
+  const deleteButton = document.querySelectorAll(".wrapper__delete");
+
+  deleteButton.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      removeCytyFromFavorite(btn.getAttribute("data-city-name"));
+      btn.parentElement.remove();
+    });
+  });
+
+  editButton.addEventListener("click", () => {
+    const EDIT_ATTRIBUTE = "data-edit-mode";
+
+    if (!editButton.getAttribute(EDIT_ATTRIBUTE)) {
+      editButton.setAttribute(EDIT_ATTRIBUTE, "true");
+      editButton.textContent = "Fertig";
+
+      deleteButton.forEach((btn) => {
+        btn.classList.add("wrapper__delete--show");
+      });
+    } else {
+      editButton.removeAttribute(EDIT_ATTRIBUTE);
+      editButton.textContent = "Bearbeiten";
+
+      deleteButton.forEach((btn) => {
+        btn.classList.remove("wrapper__delete--show");
+      });
+    }
+  });
+
+  const searchBar = document.querySelector(".main-menu__search-input");
+
+  searchBar.addEventListener("input", async (e) => {
+    const q = e.target.value;
+
+    let searchResults = [];
+
+    if (q.length > 1) {
+      searchResults = await searchLocation(q);
+      console.log(searchResults);
+    }
+
+    renderSearchResults(searchResults);
+    registerSearchResultsEventListeners();
+  });
+
   const cities = document.querySelectorAll(".city");
 
   cities.forEach((city) => {

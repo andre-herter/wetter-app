@@ -16,8 +16,20 @@
     text-shadow: $text-shadow;
   }
 
+  &__edit {
+    background-color: transparent;
+    border: none;
+    color: $text-color;
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-shadow;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+
   &__search-bar {
     width: 100%;
+    position: relative;
   }
 
   &__search-input {
@@ -29,6 +41,37 @@
     border: none;
   }
 
+  &__search-results {
+    position: absolute;
+    z-index: 2;
+    // iOS Hack
+    transform: translateZ(100px);
+    left: 0;
+    right: 0;
+    background-color: $elevation;
+    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+
+    .search-result {
+      padding: 0.75rem;
+      border-bottom: $border;
+      cursor: pointer;
+
+      &:last-child {
+        border: none;
+      }
+
+      &:hover {
+        background-color: $elevation-2;
+      }
+
+      &__name {
+        font-size: 1.25rem;
+        font-weight: 400;
+      }
+    }
+  }
+
   &__cities {
     display: flex;
     flex-direction: column;
@@ -36,8 +79,23 @@
   }
 }
 
-// .city-wrapper {
-// }
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  &__delete {
+    display: none;
+    width: 2rem;
+    filter: drop-shadow($text-shadow);
+    color: rgb(241, 60, 60);
+    cursor: pointer;
+
+    &--show {
+      display: block;
+    }
+  }
+}
 
 .city {
   @include m.card();
@@ -50,6 +108,7 @@
   background-size: cover;
   background-position: 50% 25%;
   text-shadow: $text-shadow;
+  flex-grow: 1;
 
   &__name {
     font-weight: 400;
@@ -62,6 +121,10 @@
 
   &__condition {
     margin-top: 2rem;
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   &__temperature {
