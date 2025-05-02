@@ -1,4 +1,4 @@
-import { getForecastWeather } from "./api";
+import { getFavoriteCities, getForecastWeather } from "./api";
 import { loadCurrentWeather } from "./currentWeather";
 import { renderLoadingScreen } from "./loading";
 import { rootElement } from "./main";
@@ -39,7 +39,11 @@ function getMenuHeaderHtml() {
 }
 
 async function getCitiesHtml() {
-  const favoriteCities = ["Kreuztal", "London", "Peking"];
+  const favoriteCities = getFavoriteCities();
+
+  if (!favoriteCities || favoriteCities.length < 1) {
+    return "Noch keine Favoriten grspeichert";
+  }
 
   const favoriteCityEl = [];
 
