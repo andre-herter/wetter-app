@@ -8,7 +8,7 @@ import { loadCurrentWeather } from "./currentWeather";
 import { renderLoadingScreen } from "./loading";
 import { rootElement } from "./main";
 import { getConditionImagePath } from "./conditions";
-import { formatTemperature } from "./untils";
+import { formatTemperature, debounce } from "./untils";
 
 export async function loadMainMenu() {
   rootElement.classList.remove("show-background");
@@ -72,10 +72,11 @@ async function getCitiesHtml() {
 
     const cityHtml = `
         <div class="wrapper">
-            <div class="wrapper__delete" data-city-name="${city}">${deleteIcon}</div>
+            <div class="wrapper__delete" data-city-id="${city}">${deleteIcon}</div>
             <div
                 class="city"
-                data-city-name=${location.name}
+                data-city-name="${location.name}"
+                data-city-id=${city}
                 ${
                   conditionImage
                     ? `style="
@@ -86,7 +87,7 @@ async function getCitiesHtml() {
                 
             >
                 <div class="city__left-column">
-                    <h2 class="city__name">${city}</h2>
+                    <h2 class="city__name">${location.name}</h2>
                     <div class="city__country">${location.country}</div>
                     <div class="city__condition">${current.condition.text}</div>
                 </div>
@@ -119,7 +120,7 @@ async function getCitiesHtml() {
 function renderSearchResults(searchResults) {
   const searchResultsEl = searchResults.map(
     (result) => `
-        <div class="search-result" data-city-name="${result.name}">
+        <div class="search-result" data-city-name="${result.name}" data-city-id="${result.id}">
           <h3 class="search-result__name">${result.name}</h3>
           <p class="search-result__country">${result.country}</p>
         </div>
@@ -132,15 +133,35 @@ function renderSearchResults(searchResults) {
   searchResultsDiv.innerHTML = searchResultsHtml;
 }
 
+function renderSearchResultsLoading() {
+  const searchResultsDiv = document.querySelector(".main-menu__search-results");
+  searchResultsDiv.innerHTML = `<div class="search-result">Lade Vorschläge...</div>`;
+}
+
 function registerSearchResultsEventListeners() {
   const searchResults = document.querySelectorAll(".search-result");
 
   searchResults.forEach((searchResult) => {
     searchResult.addEventListener("click", () => {
       const cityName = searchResult.getAttribute("data-city-name");
-      loadCurrentWeather(cityName);
+      const cityId = searchResult.getAttribute("data-city-id");
+      loadCurrentWeather(cityName, cityId);
     });
   });
+}
+
+function bodyClickHandler(e) {
+  const searchWrapper = document.querySelector(".main-menu__search-bar");
+
+  if (!searchWrapper) {
+    document.removeEventListener("click", bodyClickHandler);
+    return;
+  }
+
+  if (!searchWrapper.contains(e.target)) {
+    const searchResults = document.querySelector(".main-menu__search-results");
+    searchResults.classList.add("main-menu__search-results--hidden");
+  }
 }
 
 function registerEventListeners() {
@@ -149,7 +170,7 @@ function registerEventListeners() {
 
   deleteButton.forEach((btn) => {
     btn.addEventListener("click", () => {
-      removeCytyFromFavorite(btn.getAttribute("data-city-name"));
+      removeCytyFromFavorite(btn.getAttribute("data-city-id"));
       btn.parentElement.remove();
     });
   });
@@ -176,18 +197,28 @@ function registerEventListeners() {
 
   const searchBar = document.querySelector(".main-menu__search-input");
 
-  searchBar.addEventListener("input", async (e) => {
-    const q = e.target.value;
+  searchBar.addEventListener(
+    "input",
+    debounce(async (e) => {
+      const q = e.target.value;
 
-    let searchResults = [];
+      let searchResults = [];
 
-    if (q.length > 1) {
-      searchResults = await searchLocation(q);
-      console.log(searchResults);
-    }
+      if (q.length > 1) {
+        renderSearchResultsLoading();
+        searchResults = await searchLocation(q);
+      }
 
-    renderSearchResults(searchResults);
-    registerSearchResultsEventListeners();
+      renderSearchResults(searchResults);
+      registerSearchResultsEventListeners();
+    }, 500)
+  );
+
+  document.addEventListener("click", bodyClickHandler);
+
+  searchBar.addEventListener("focusin", () => {
+    const searchResults = document.querySelector(".main-menu__search-results");
+    searchResults.classList.remove("main-menu__search-results--hidden");
   });
 
   const cities = document.querySelectorAll(".city");
@@ -195,8 +226,9 @@ function registerEventListeners() {
   cities.forEach((city) => {
     city.addEventListener("click", () => {
       const cityName = city.getAttribute("data-city-name");
+      const cityID = city.getAttribute("data-city-id");
 
-      loadCurrentWeather(cityName);
+      loadCurrentWeather(cityName, cityID);
     });
   });
 }

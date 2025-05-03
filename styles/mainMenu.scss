@@ -52,6 +52,10 @@
     border-bottom-right-radius: $border-radius;
     border-bottom-left-radius: $border-radius;
 
+    &--hidden {
+      display: none;
+    }
+
     .search-result {
       padding: 0.75rem;
       border-bottom: $border;
