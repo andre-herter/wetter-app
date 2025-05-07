@@ -29,8 +29,9 @@ body {
   background-color: $background;
   color: $text-color;
   padding: 1rem;
-  min-height: 100vh;
+  height: 100vh;
   font-family: $font-family;
+  overflow: auto;
 
   @include m.largeScreens {
     width: 400px;

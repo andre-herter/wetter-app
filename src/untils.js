@@ -34,8 +34,6 @@ export function formatTwentyFourHourTime(time) {
 }
 
 export function get24HoursForecastFromNow(forecast, last_updated_epoch) {
-  console.log(forecast, last_updated_epoch);
-
   const todaysForecast = forecast[0].hour;
   const tomorrowsForecast = forecast[1].hour;
 
@@ -44,8 +42,6 @@ export function get24HoursForecastFromNow(forecast, last_updated_epoch) {
   const firstFutureTimeIndex = todaysForecast.findIndex(
     (hour) => hour.time_epoch > last_updated_epoch
   );
-
-  console.log(firstFutureTimeIndex);
 
   for (let i = firstFutureTimeIndex - 1; i < todaysForecast.length; i++) {
     newForecast.push(todaysForecast[i]);

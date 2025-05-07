@@ -9,8 +9,6 @@ export async function getForecastWeather(location, days = 3) {
 
   const weatherData = await response.json();
 
-  console.log(weatherData);
-
   return weatherData;
 }
 

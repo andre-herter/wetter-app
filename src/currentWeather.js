@@ -60,7 +60,9 @@ function renderCurrentWeather(weatherData, cityId) {
       current.precip_mm,
       current.uv,
       currentDay.astro.sunrise,
-      currentDay.astro.sunset
+      currentDay.astro.sunset,
+      currentDay.astro.moonrise,
+      currentDay.astro.moonset
     );
 }
 
@@ -199,7 +201,9 @@ function getForecastInformationHtml(
   precip,
   uvIndex,
   sunrise,
-  sunset
+  sunset,
+  moonrise,
+  moonset
 ) {
   return `
     <div class="forecastinformations">
@@ -229,6 +233,18 @@ function getForecastInformationHtml(
           <span class="forecastinformation__heading">Sonnenuntergang</span>
           <span class="forecastinformation__value">${formatTwentyFourHourTime(
             sunset
+          )} Uhr</span>
+        </div>
+         <div class="forecastinformation"
+          <span class="forecastinformation__heading">Mondaufgang</span>
+          <span class="forecastinformation__value">${formatTwentyFourHourTime(
+            moonrise
+          )} Uhr</span>
+        </div>
+        <div class="forecastinformation"
+          <span class="forecastinformation__heading">Monduntergang</span>
+          <span class="forecastinformation__value">${formatTwentyFourHourTime(
+            moonset
           )} Uhr</span>
         </div>
     </div>
